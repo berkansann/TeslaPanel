@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Command Center v11.1</title>
+    <style>
+        :root {
+            --bg-color: #f2f2f2;
+            --btn-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --line-color: rgba(0,0,0,0.04); /* Hafif geometrik çizgiler */
+            --btn-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        body.dark-mode {
+            --bg-color: #0d0d0d;
+            --btn-bg: #1a1a1a;
+            --text-main: #e0e0e0;
+            --text-sub: #888888;
+            --line-color: rgba(255,255,255,0.03);
+            --btn-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            /* Görseldeki geometrik çizgi desenini simüle eden SVG arka plan */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23888' stroke-opacity='0.1' stroke-width='1'%3E%3Cpath d='M750 0l-50 50L650 0l-50 50L550 0l-50 50L450 0l-50 50L350 0l-50 50L250 0l-50 50L150 0l-50 50L50 0 0 50'/%3E%3Cpath d='M0 750l50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50'/%3E%3Cpath d='M50 800V0M150 800V0M250 800V0M350 800V0M450 800V0M550 800V0M650 800V0M750 800V0'/%3E%3Cpath d='M0 50h800M0 150h800M0 250h800M0 350h800M0 450h800M0 550h800M0 650h800M0 750h800'/%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.4s ease;
+        }
+
+        /* Köşe Araçları */
+        .top-tools {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.6rem;
+            color: var(--text-main);
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+        .tool-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        .top-info {
+            position: absolute;
+            top: 25px;
+            left: 35px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* Izgara Yapısı */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+        }
+
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.1s ease;
+        }
+        .app-item:active { transform: scale(0.96); }
+
+        .app-btn {
+            width: 175px;
+            height: 175px;
+            background: var(--btn-bg);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--btn-shadow);
+            margin-bottom: 12px;
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: background-color 0.4s ease, border 0.4s ease;
+        }
+
+        .app-btn img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-item span {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        /* Grok AI */
+        .grok-row {
+            grid-column: 2 / span 3;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .grok-btn {
+            width: 100%;
+            height: 175px;
+            background: #000;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+            border: 1px solid #333;
+        }
+
+        .grok-btn img {
+            max-width: 80%;
+            filter: invert(1);
+        }
+
+        /* İmza */
+        footer {
+            margin-top: 80px;
+            text-align: center;
+        }
+        .signature {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            opacity: 0.7;
+        }
+
+        /* Hesap Makinesi Modalı */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--btn-bg); padding: 40px; border-radius: 30px; width: 380px; color: var(--text-main); border: 1px solid var(--line-color); }
+        #calc-display { width: 100%; height: 75px; background: rgba(0,0,0,0.05); border: none; color: var(--text-main); text-align: right; padding: 20px; font-size: 2.5rem; margin-bottom: 25px; border-radius: 15px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .calc-grid button { background: rgba(0,0,0,0.03); color: var(--text-main); border: none; padding: 22px; border-radius: 15px; font-size: 1.4rem; font-weight: bold; }
+    </style>
+</head>
+<body id="mainBody">
+
+    <div class="top-info" id="clock">--:--</div>
+
+    <div class="top-tools">
+        <button class="tool-btn" onclick="toggleFullscreen()">⛶</button>
+        <button class="tool-btn" id="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+    </div>
+
+    <div class="app-grid">
+        <a href="https://www.netflix.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="netflix.png" alt="Netflix"></div>
+            <span>Netflix</span>
+        </a>
+        <a href="https://www.primevideo.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="prime.png" alt="Prime Video"></div>
+            <span>Prime Video</span>
+        </a>
+        <a href="https://www.disneyplus.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="disney.png" alt="Disney+"></div>
+            <span>Disney+</span>
+        </a>
+        <a href="https://www.max.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="hbo.png" alt="HBO Max"></div>
+            <span>HBO Max</span>
+        </a>
+        <a href="https://www.youtube.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="youtube.png" alt="YouTube"></div>
+            <span>YouTube</span>
+        </a>
+
+        <a href="https://www.sefirox.com/" class="app-item" target="_blank">
+            <div class="app-btn"><img src="tv.png" alt="Canlı TV"></div>
+            <span>Canlı TV</span>
+        </a>
+        <a href="https://abetterrouteplanner.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="abrp.png" alt="ABRP"></div>
+            <span>ABRP</span>
+        </a>
+        <a href="https://www.plugshare.com" class="app-item" target="_blank">
+            <div class="app-btn"><img src="plugshare.png" alt="PlugShare"></div>
+            <span>PlugShare</span>
+        </a>
+        <div class="app-item" onclick="openCalc()">
+            <div class="app-btn"><img src="hesapmakinesi.png" alt="Hesap Makinesi"></div>
+            <span>Hesap Makinesi</span>
+        </div>
+        <a href="https://aracsarjfiyatlari.com/" class="app-item" target="_blank">
+            <div class="app-btn"><img src="sarj.png" alt="Şarj Fiyatları"></div>
+            <span>Şarj Fiyatları</span>
+        </a>
+
+        <div class="grok-row">
+            <a href="https://grok.com" class="app-item" target="_blank" style="width: 100%;">
+                <div class="grok-btn">
+                    <img src="grok.svg" alt="Grok AI">
+                </div>
+                <span style="font-weight: 800; margin-top: 5px;">GROK AI</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="calcModal" class="modal">
+        <div class="modal-content">
+            <input type="text" id="calc-display" readonly placeholder="0">
+            <div class="calc-grid">
+                <button onclick="clearCalc()">C</button>
+                <button onclick="addInput('/')">÷</button>
+                <button onclick="addInput('*')">×</button>
+                <button onclick="deleteLast()">⌫</button>
+                <button onclick="addInput('7')">7</button><button onclick="addInput('8')">8</button><button onclick="addInput('9')">9</button>
+                <button onclick="addInput('-')">-</button>
+                <button onclick="addInput('4')">4</button><button onclick="addInput('5')">5</button><button onclick="addInput('6')">6</button>
+                <button onclick="addInput('+')">+</button>
+                <button onclick="addInput('1')">1</button><button onclick="addInput('2')">2</button><button onclick="addInput('3')">3</button>
+                <button onclick="calculate()" style="background: #111; color: #fff">=</button>
+                <button onclick="addInput('0')" style="grid-column: span 2;">0</button>
+                <button onclick="addInput('.')">.</button>
+            </div>
+            <button onclick="closeCalc()" style="margin-top:20px; background:none; border:none; color:#888; width:100%; cursor:pointer;">KAPAT</button>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() { 
+            const now = new Date(); 
+            document.getElementById('clock').innerText = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }); 
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.getElementById('dark-toggle');
+            btn.innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        function openCalc() { document.getElementById('calcModal').style.display = 'flex'; }
+        function closeCalc() { document.getElementById('calcModal').style.display = 'none'; }
+        let display = document.getElementById('calc-display');
+        function addInput(v) { display.value += v; }
+        function clearCalc() { display.value = ''; }
+        function deleteLast() { display.value = display.value.slice(0, -1); }
+        function calculate() { try { display.value = eval(display.value.replace('×', '*').replace('÷', '/')); } catch { display.value = 'Hata'; } }
+    </script>
+    <footer style="margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%;">
+        <div style="height: 1px; width: 100px; background: rgba(0,0,0,0.1); margin: 0 auto 20px;"></div>
+        <p style="color: #bbb; font-size: 0.9rem; letter-spacing: 2px; font-weight: 300; text-transform: uppercase;">
+            Created by <span style="color: #888; font-weight: 600;">Berkan Şan</span>
+        </p>
+    </footer>
+</body>
+</body>
+</html>
