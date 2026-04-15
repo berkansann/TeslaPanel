@@ -1,80 +1,138 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesla Command Center v11.1</title>
+    <title>Tesla Command Center v12.0</title>
     <style>
         :root {
-            --bg-color: #f2f2f2;
-            --btn-bg: #ffffff;
-            --text-main: #333333;
-            --text-sub: #666666;
-            --line-color: rgba(0,0,0,0.04); /* Hafif geometrik çizgiler */
-            --btn-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --bg-color: #f5f5f7;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --btn-bg: rgba(255, 255, 255, 0.65);
+            --btn-border: rgba(255, 255, 255, 0.8);
+            --btn-text: #1d1d1f;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --accent-color: #007aff;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            --hover-scale: 1.05;
+            --transition-speed: 0.3s;
+            --grok-bg: rgba(255, 255, 255, 0.65);
+            --grok-hover-bg: rgba(255, 255, 255, 0.9);
+            --grok-filter: invert(0);
         }
 
         body.dark-mode {
-            --bg-color: #0d0d0d;
-            --btn-bg: #1a1a1a;
-            --text-main: #e0e0e0;
-            --text-sub: #888888;
-            --line-color: rgba(255,255,255,0.03);
-            --btn-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            --bg-color: #000000;
+            --glass-bg: rgba(30, 30, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f5f7;
+            --text-sub: #a1a1a6;
+            --accent-color: #2997ff;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --grok-bg: rgba(255, 255, 255, 0.65);
+            --grok-hover-bg: rgba(255, 255, 255, 0.9);
+            --grok-filter: invert(0);
         }
 
         body {
             background-color: var(--bg-color);
-            /* Görseldeki geometrik çizgi desenini simüle eden SVG arka plan */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23888' stroke-opacity='0.1' stroke-width='1'%3E%3Cpath d='M750 0l-50 50L650 0l-50 50L550 0l-50 50L450 0l-50 50L350 0l-50 50L250 0l-50 50L150 0l-50 50L50 0 0 50'/%3E%3Cpath d='M0 750l50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50 50 50 50-50'/%3E%3Cpath d='M50 800V0M150 800V0M250 800V0M350 800V0M450 800V0M550 800V0M650 800V0M750 800V0'/%3E%3Cpath d='M0 50h800M0 150h800M0 250h800M0 350h800M0 450h800M0 550h800M0 650h800M0 750h800'/%3E%3C/g%3E%3C/svg%3E");
-            background-attachment: fixed;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-image: radial-gradient(circle at 50% -20%, rgba(100, 100, 100, 0.1) 0%, transparent 80%);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 80px 40px;
+            padding: 30px 50px;
+            box-sizing: border-box;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: background-color 0.4s ease;
+            transition: background-color var(--transition-speed) ease;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        /* Köşe Araçları */
-        .top-tools {
-            position: absolute;
-            top: 25px;
-            right: 35px;
+        /* --- ÜST BİLGİ VE ARAÇLAR --- */
+        .header-controls {
+            width: 100%;
+            padding: 15px 30px;
+            box-sizing: border-box;
             display: flex;
-            gap: 20px;
-            z-index: 100;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            z-index: 999;
+            flex-shrink: 0;
+        }
+
+        .info-group {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .clock {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .altitude {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .altitude small {
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 15px;
         }
 
         .tool-btn {
-            background: none;
-            border: none;
+            background: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            font-size: 1.6rem;
-            color: var(--text-main);
-            opacity: 0.5;
-            transition: 0.3s;
-        }
-        .tool-btn:hover { opacity: 1; transform: scale(1.1); }
-
-        .top-info {
-            position: absolute;
-            top: 25px;
-            left: 35px;
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: var(--text-main);
+            font-size: 1.2rem;
+            color: var(--btn-text);
+            transition: all var(--transition-speed) ease;
+            box-shadow: var(--shadow);
         }
 
-        /* Izgara Yapısı */
+        .tool-btn:hover {
+            background: var(--btn-text);
+            color: var(--btn-bg);
+            transform: scale(1.1);
+        }
+
+        /* --- IZGARA --- */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 30px;
+            gap: 25px;
             width: 100%;
-            max-width: 1200px;
-            position: relative;
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px 0;
+            z-index: 1;
         }
 
         .app-item {
@@ -82,90 +140,434 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            transition: transform 0.1s ease;
+            gap: 12px;
+            cursor: pointer;
         }
-        .app-item:active { transform: scale(0.96); }
 
         .app-btn {
-            width: 175px;
-            height: 175px;
+            width: 130px;
+            height: 130px;
             background: var(--btn-bg);
-            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: var(--btn-shadow);
-            margin-bottom: 12px;
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: background-color 0.4s ease, border 0.4s ease;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--btn-border);
+            transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 30px 30px 0 0;
+            pointer-events: none;
+        }
+
+        .app-item:hover .app-btn {
+            transform: scale(var(--hover-scale)) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .app-item:active .app-btn {
+            transform: scale(0.95);
         }
 
         .app-btn img {
-            width: 100%; height: 100%;
+            width: 60%;
+            height: 60%;
             object-fit: contain;
-            padding: 20px;
-            box-sizing: border-box;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .app-item:hover .app-btn img {
+            transform: scale(1.1);
         }
 
         .app-item span {
             font-size: 0.95rem;
-            color: var(--text-sub);
+            color: var(--text-main);
             font-weight: 500;
+            opacity: 0.8;
+            letter-spacing: 0.3px;
+            transition: opacity 0.2s ease;
         }
 
-        /* Grok AI */
+        .app-item:hover span {
+            opacity: 1;
+        }
+
+        /* --- GROK AI --- */
         .grok-row {
-            grid-column: 2 / span 3;
-            margin-top: 20px;
+            grid-column: span 3;
+            margin-top: 15px;
             display: flex;
             justify-content: center;
         }
 
         .grok-btn {
             width: 100%;
-            height: 175px;
-            background: #000;
-            border-radius: 24px;
+            height: 100px;
+            background: var(--grok-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.25);
-            border: 1px solid #333;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            transition: all var(--transition-speed);
         }
 
         .grok-btn img {
-            max-width: 80%;
-            filter: invert(1);
+            height: 40%;
+            filter: var(--grok-filter);
         }
 
-        /* İmza */
+        .grok-row a:hover .grok-btn {
+            transform: scale(1.02);
+            background: var(--grok-hover-bg);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- İMZA --- */
         footer {
-            margin-top: 80px;
             text-align: center;
-        }
-        .signature {
-            font-size: 0.75rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--text-sub);
-            opacity: 0.7;
+            width: 100%;
+            z-index: 0;
+            flex-shrink: 0;
         }
 
-        /* Hesap Makinesi Modalı */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--btn-bg); padding: 40px; border-radius: 30px; width: 380px; color: var(--text-main); border: 1px solid var(--line-color); }
-        #calc-display { width: 100%; height: 75px; background: rgba(0,0,0,0.05); border: none; color: var(--text-main); text-align: right; padding: 20px; font-size: 2.5rem; margin-bottom: 25px; border-radius: 15px; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .calc-grid button { background: rgba(0,0,0,0.03); color: var(--text-main); border: none; padding: 22px; border-radius: 15px; font-size: 1.4rem; font-weight: bold; }
+        .signature {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            opacity: 0.5;
+            font-weight: 300;
+        }
+
+        /* --- HESAP MAKİNESİ MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            padding: 35px;
+            border-radius: 40px;
+            width: 340px;
+            color: var(--text-main);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        #calc-display {
+            width: 100%;
+            height: 80px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            text-align: right;
+            padding: 10px 15px;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 25px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .calc-grid button {
+            background: rgba(125, 125, 125, 0.1);
+            color: var(--text-main);
+            border: none;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            font-size: 1.5rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calc-grid button:hover {
+            background: rgba(125, 125, 125, 0.25);
+        }
+
+        .calc-grid button:active {
+            transform: scale(0.9);
+        }
+
+        .calc-op {
+            color: var(--accent-color) !important;
+            font-weight: 500 !important;
+            background: rgba(0, 122, 255, 0.1) !important;
+        }
+
+        .calc-eq {
+            background: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        .calc-eq:hover {
+            filter: brightness(1.1);
+        }
+
+        .modal-btn-close {
+            margin-top: 25px;
+            background: rgba(125, 125, 125, 0.1);
+            border: none;
+            color: var(--text-sub);
+            width: 100%;
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-close:hover {
+            background: rgba(125, 125, 125, 0.2);
+            color: var(--text-main);
+        }
+
+        /* --- OYUN MODAL EXTRA --- */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cell {
+            background: rgba(125, 125, 125, 0.1);
+            height: 100px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--glass-border);
+        }
+
+        .cell:hover {
+            background: rgba(125, 125, 125, 0.25);
+            transform: scale(0.98);
+        }
+
+        /* --- GAMES MENU & GAMES MODAL OVERRIDES --- */
+        .games-menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .game-select-btn {
+            background: rgba(125, 125, 125, 0.1);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .game-select-btn:hover {
+            background: rgba(125, 125, 125, 0.2);
+            transform: scale(1.02);
+        }
+
+        .game-select-btn span.icon {
+            font-size: 2.5rem;
+        }
+
+        /* --- HAFIZA OYUNU --- */
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mem-card {
+            background: rgba(125, 125, 125, 0.1);
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--glass-border);
+            transform-style: preserve-3d;
+        }
+
+        .mem-card.flipped {
+            background: var(--glass-bg);
+            transform: rotateY(180deg);
+        }
+
+        .mem-card.matched {
+            background: rgba(41, 151, 255, 0.1);
+            opacity: 0.8;
+            cursor: default;
+        }
+
+        .mem-card span {
+            display: none;
+            transform: rotateY(180deg);
+        }
+
+        .mem-card.flipped span, .mem-card.matched span {
+            display: block;
+        }
+
+        /* --- TAŞ KAĞIT MAKAS --- */
+        .rps-options {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        .rps-btn {
+            background: rgba(125, 125, 125, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .rps-btn:hover {
+            transform: scale(1.1);
+            background: rgba(125, 125, 125, 0.25);
+        }
+
+        .rps-result {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            min-height: 80px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: var(--text-sub);
+            padding: 0 15px;
+        }
+
+        /* --- TESLA RACER OYUNU --- */
+        .tesla-game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        #teslaCanvas {
+            background: #2a2a2a;
+            border: 2px solid var(--glass-border);
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            touch-action: none;
+        }
+
+        .tesla-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            margin-top: 15px;
+        }
+
+        .t-btn {
+            background: rgba(125, 125, 125, 0.1);
+            border: 1px solid var(--glass-border);
+            padding: 15px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+        
+        .t-btn:active {
+            background: rgba(125, 125, 125, 0.3);
+        }
     </style>
 </head>
+
 <body id="mainBody">
 
-    <div class="top-info" id="clock">--:--</div>
-
-    <div class="top-tools">
-        <button class="tool-btn" onclick="toggleFullscreen()">⛶</button>
-        <button class="tool-btn" id="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+    <div class="header-controls">
+        <div class="info-group">
+            <div class="clock" id="clock">00:00</div>
+            <div class="altitude" id="alt-box" style="display: none;">
+                <span id="alt-val">--</span><small>m ASL</small>
+            </div>
+        </div>
+        <div class="tool-group">
+            <button class="tool-btn" onclick="toggleFullscreen()">⛶</button>
+            <button class="tool-btn" id="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
     </div>
 
     <div class="app-grid">
@@ -190,9 +592,13 @@
             <span>YouTube</span>
         </a>
 
-        <a href="https://www.sefirox.com/" class="app-item" target="_blank">
+        <a href="https://www.canlitv.diy/tr" class="app-item" target="_blank">
             <div class="app-btn"><img src="tv.png" alt="Canlı TV"></div>
             <span>Canlı TV</span>
+        </a>
+        <a href="https://www.google.com/maps" class="app-item" target="_blank">
+            <div class="app-btn"><img src="maps.png" alt="Google Haritalar"></div>
+            <span>Haritalar</span>
         </a>
         <a href="https://abetterrouteplanner.com" class="app-item" target="_blank">
             <div class="app-btn"><img src="abrp.png" alt="ABRP"></div>
@@ -219,42 +625,187 @@
                 <span style="font-weight: 800; margin-top: 5px;">GROK AI</span>
             </a>
         </div>
+
+        <div class="app-item" onclick="openGamesMenu()">
+            <div class="app-btn">
+                <svg width="50%" height="50%" viewBox="0 0 24 24" fill="none" stroke="var(--btn-text)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="6" width="20" height="12" rx="4"></rect>
+                    <path d="M6 12h4m-2-2v4m5-1h.01M18 11h.01"></path>
+                </svg>
+            </div>
+            <span>Mini Oyunlar</span>
+        </div>
     </div>
+
+    <footer>
+        <p class="signature">Created by <b>Berkan Şan</b></p>
+    </footer>
 
     <div id="calcModal" class="modal">
         <div class="modal-content">
             <input type="text" id="calc-display" readonly placeholder="0">
             <div class="calc-grid">
-                <button onclick="clearCalc()">C</button>
-                <button onclick="addInput('/')">÷</button>
-                <button onclick="addInput('*')">×</button>
-                <button onclick="deleteLast()">⌫</button>
-                <button onclick="addInput('7')">7</button><button onclick="addInput('8')">8</button><button onclick="addInput('9')">9</button>
-                <button onclick="addInput('-')">-</button>
-                <button onclick="addInput('4')">4</button><button onclick="addInput('5')">5</button><button onclick="addInput('6')">6</button>
-                <button onclick="addInput('+')">+</button>
-                <button onclick="addInput('1')">1</button><button onclick="addInput('2')">2</button><button onclick="addInput('3')">3</button>
-                <button onclick="calculate()" style="background: #111; color: #fff">=</button>
-                <button onclick="addInput('0')" style="grid-column: span 2;">0</button>
+                <button onclick="clearCalc()" class="calc-op"
+                    style="color:#ff3b30!important; background:rgba(255,59,48,0.1)!important;">C</button>
+                <button onclick="addInput('/')" class="calc-op">÷</button>
+                <button onclick="addInput('*')" class="calc-op">×</button>
+                <button onclick="deleteLast()" class="calc-op">⌫</button>
+
+                <button onclick="addInput('7')">7</button><button onclick="addInput('8')">8</button><button
+                    onclick="addInput('9')">9</button>
+                <button onclick="addInput('-')" class="calc-op">-</button>
+
+                <button onclick="addInput('4')">4</button><button onclick="addInput('5')">5</button><button
+                    onclick="addInput('6')">6</button>
+                <button onclick="addInput('+')" class="calc-op">+</button>
+
+                <button onclick="addInput('1')">1</button><button onclick="addInput('2')">2</button><button
+                    onclick="addInput('3')">3</button>
+                <button onclick="calculate()" class="calc-eq">=</button>
+
+                <button onclick="addInput('0')"
+                    style="grid-column: span 2; width: 100%; border-radius: 35px;">0</button>
                 <button onclick="addInput('.')">.</button>
             </div>
-            <button onclick="closeCalc()" style="margin-top:20px; background:none; border:none; color:#888; width:100%; cursor:pointer;">KAPAT</button>
+            <button onclick="closeCalc()" class="modal-btn-close">KAPAT</button>
+        </div>
+    </div>
+
+    <!-- GAMES MENU SET -->
+    <div id="gamesMenuModal" class="modal">
+        <div class="modal-content" style="width: 340px;">
+            <h2 style="text-align: center; margin-top: 5px; font-weight: 500; font-size: 1.8rem;">Oyun Kutusu</h2>
+            <div class="games-menu-grid">
+                <div class="game-select-btn" onclick="openTeslaRacer()">
+                    <span class="icon">🏎️</span>
+                    <span>Tesla Otoyol Kaçış</span>
+                </div>
+                <div class="game-select-btn" onclick="openXox()">
+                    <span class="icon">❌</span>
+                    <span>X-O-X Oyunu</span>
+                </div>
+                <div class="game-select-btn" onclick="openMemory()">
+                    <span class="icon">🃏</span>
+                    <span>Hafıza Kartları</span>
+                </div>
+                <div class="game-select-btn" onclick="openRps()">
+                    <span class="icon">✂️</span>
+                    <span>Taş-Kağıt-Makas</span>
+                </div>
+            </div>
+            <button onclick="closeGamesMenu()" class="modal-btn-close">KAPAT</button>
+        </div>
+    </div>
+
+    <!-- XOX -->
+    <div id="xoxModal" class="modal">
+        <div class="modal-content" style="width: 360px;">
+            <h2 style="text-align: center; margin-top: 5px; font-weight: 500; font-size: 1.8rem; letter-spacing: 2px;">X - O - X</h2>
+            <div id="board" class="game-board">
+                <div class="cell" onclick="makeMove(0)"></div>
+                <div class="cell" onclick="makeMove(1)"></div>
+                <div class="cell" onclick="makeMove(2)"></div>
+                <div class="cell" onclick="makeMove(3)"></div>
+                <div class="cell" onclick="makeMove(4)"></div>
+                <div class="cell" onclick="makeMove(5)"></div>
+                <div class="cell" onclick="makeMove(6)"></div>
+                <div class="cell" onclick="makeMove(7)"></div>
+                <div class="cell" onclick="makeMove(8)"></div>
+            </div>
+            <div id="game-status" style="text-align: center; margin-top: 25px; font-size: 1.3rem; font-weight: 500; height: 35px;">Sıra: ❌</div>
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button onclick="openGamesMenuFromGame('xoxModal')" class="modal-btn-close" style="margin-top: 0;">MENÜ</button>
+                <button onclick="resetGame()" class="modal-btn-close" style="margin-top: 0; background: rgba(0, 122, 255, 0.15); color: var(--accent-color);">YENİDEN BAŞLA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HAFIZA KARTLARI -->
+    <div id="memoryModal" class="modal">
+        <div class="modal-content" style="width: 360px;">
+            <h2 style="text-align: center; margin-top: 5px; font-weight: 500; font-size: 1.8rem;">Hafıza Kartları</h2>
+            <div class="score-board">Hamle: <span id="mem-moves">0</span></div>
+            <div id="mem-board" class="memory-board"></div>
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="openGamesMenuFromGame('memoryModal')" class="modal-btn-close" style="margin-top: 0;">MENÜ</button>
+                <button onclick="initMemory()" class="modal-btn-close" style="margin-top: 0; background: rgba(0, 122, 255, 0.15); color: var(--accent-color);">YENİDEN BAŞLA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAŞ KAĞIT MAKAS -->
+    <div id="rpsModal" class="modal">
+        <div class="modal-content" style="width: 340px;">
+            <h2 style="text-align: center; margin-top: 5px; font-weight: 500; font-size: 1.8rem;">Taş-Kağıt-Makas</h2>
+            <div class="score-board">
+                <span>Sen: <span id="rps-pscore">0</span></span>
+                <span>Tesla: <span id="rps-cscore">0</span></span>
+            </div>
+            <div class="rps-result" id="rps-res-text">Seçimini Yap!</div>
+            <div class="rps-options">
+                <button class="rps-btn" onclick="playRPS('🪨')">🪨</button>
+                <button class="rps-btn" onclick="playRPS('📄')">📄</button>
+                <button class="rps-btn" onclick="playRPS('✂️')">✂️</button>
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="openGamesMenuFromGame('rpsModal')" class="modal-btn-close" style="margin-top: 0;">MENÜ</button>
+                <button onclick="resetRPS()" class="modal-btn-close" style="margin-top: 0; background: rgba(0, 122, 255, 0.15); color: var(--accent-color);">SIFIRLA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TESLA RACER -->
+    <div id="teslaRacerModal" class="modal">
+        <div class="modal-content" style="width: 360px;">
+            <h2 style="text-align: center; margin-top: 5px; font-weight: 500; font-size: 1.8rem;">Tesla Otoyol</h2>
+            <div class="score-board">Skor: <span id="tr-score">0</span></div>
+            <div class="tesla-game-container">
+                <canvas id="teslaCanvas" width="300" height="400"></canvas>
+                <div class="tesla-controls">
+                    <button class="t-btn" id="tLeftBtn">⬅️</button>
+                    <button class="t-btn" id="tRightBtn">➡️</button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="openGamesMenuFromGame('teslaRacerModal')" class="modal-btn-close" style="margin-top: 0;">MENÜ</button>
+                <button onclick="startTeslaRacer()" class="modal-btn-close" style="margin-top: 0; background: rgba(0, 122, 255, 0.15); color: var(--accent-color);">BAŞLA</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function updateClock() { 
-            const now = new Date(); 
-            document.getElementById('clock').innerText = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }); 
+        // Saat İşlemi
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         }
         setInterval(updateClock, 1000); updateClock();
 
+        // Rakım (Altimetre) İşlemi
+        function getAltitude() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lon}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('alt-val').innerText = Math.round(data.results[0].elevation);
+                            document.getElementById('alt-box').style.display = 'block';
+                        }).catch(() => { });
+                });
+            }
+        }
+        setInterval(getAltitude, 60000); getAltitude();
+
+        // Karanlık Mod
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const btn = document.getElementById('dark-toggle');
             btn.innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
         }
 
+        // Tam Ekran
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
@@ -263,20 +814,407 @@
             }
         }
 
-        function openCalc() { document.getElementById('calcModal').style.display = 'flex'; }
-        function closeCalc() { document.getElementById('calcModal').style.display = 'none'; }
+        // Hesap Makinesi
+        function openCalc() {
+            let calc = document.getElementById('calcModal');
+            calc.style.display = 'flex';
+            setTimeout(() => calc.classList.add('show'), 10);
+        }
+        function closeCalc() {
+            let calc = document.getElementById('calcModal');
+            calc.classList.remove('show');
+            setTimeout(() => calc.style.display = 'none', 300);
+        }
         let display = document.getElementById('calc-display');
         function addInput(v) { display.value += v; }
         function clearCalc() { display.value = ''; }
         function deleteLast() { display.value = display.value.slice(0, -1); }
         function calculate() { try { display.value = eval(display.value.replace('×', '*').replace('÷', '/')); } catch { display.value = 'Hata'; } }
+
+        // --- GAMES MENU ---
+        function openGamesMenu() {
+            let modal = document.getElementById('gamesMenuModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeGamesMenu() {
+            let modal = document.getElementById('gamesMenuModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function openGamesMenuFromGame(gameModalId) {
+            let gameModal = document.getElementById(gameModalId);
+            gameModal.classList.remove('show');
+            setTimeout(() => {
+                gameModal.style.display = 'none';
+                openGamesMenu();
+            }, 300);
+        }
+
+        // --- XOX Oyunu İşlemleri ---
+        let boardArr = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "❌";
+        let gameActive = true;
+        const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function openXox() {
+            closeGamesMenu();
+            setTimeout(() => {
+                let modal = document.getElementById('xoxModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+                resetGame();
+            }, 300);
+        }
+
+        function makeMove(index) {
+            if (boardArr[index] !== "" || !gameActive) return;
+            
+            boardArr[index] = currentPlayer;
+            const cells = document.getElementsByClassName("cell");
+            cells[index].innerText = currentPlayer;
+            
+            checkWin();
+        }
+
+        function checkWin() {
+            let roundWon = false;
+            for (let i = 0; i <= 7; i++) {
+                const winCondition = winConditions[i];
+                let a = boardArr[winCondition[0]];
+                let b = boardArr[winCondition[1]];
+                let c = boardArr[winCondition[2]];
+                if (a === "" || b === "" || c === "") continue;
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                document.getElementById('game-status').innerText = `${currentPlayer} Kazandı! 🎉`;
+                gameActive = false;
+                return;
+            }
+
+            let roundDraw = !boardArr.includes("");
+            if (roundDraw) {
+                document.getElementById('game-status').innerText = "Berabere! 🤝";
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "❌" ? "⭕" : "❌";
+            document.getElementById('game-status').innerText = `Sıra: ${currentPlayer}`;
+        }
+
+        function resetGame() {
+            boardArr = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "❌";
+            gameActive = true;
+            document.getElementById('game-status').innerText = `Sıra: ${currentPlayer}`;
+            const cells = document.getElementsByClassName("cell");
+            for(let i=0; i<cells.length; i++) {
+                cells[i].innerText = "";
+            }
+        }
+
+        // --- HAFIZA OYUNU ---
+        const emojisArr = ['🚗','⚡','🔋','🌍','🚀','💡','🎯','⚽'];
+        let memCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memMoves = 0;
+        let canFlip = true;
+
+        function openMemory() {
+            closeGamesMenu();
+            setTimeout(() => {
+                let modal = document.getElementById('memoryModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+                initMemory();
+            }, 300);
+        }
+
+        function initMemory() {
+            let board = document.getElementById('mem-board');
+            board.innerHTML = "";
+            flippedCards = [];
+            matchedPairs = 0;
+            memMoves = 0;
+            canFlip = true;
+            document.getElementById('mem-moves').innerText = "0";
+
+            memCards = [...emojisArr, ...emojisArr].sort(() => Math.random() - 0.5);
+            
+            memCards.forEach((emoji, index) => {
+                let card = document.createElement('div');
+                card.className = "mem-card";
+                card.dataset.val = emoji;
+                card.dataset.index = index;
+                card.innerHTML = `<span>${emoji}</span>`;
+                card.onclick = () => flipCard(card);
+                board.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (!canFlip || flippedCards.includes(card) || card.classList.contains('matched')) return;
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                memMoves++;
+                document.getElementById('mem-moves').innerText = memMoves;
+                canFlip = false;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            let match = flippedCards[0].dataset.val === flippedCards[1].dataset.val;
+            if (match) {
+                flippedCards[0].classList.add('matched');
+                flippedCards[1].classList.add('matched');
+                matchedPairs++;
+                flippedCards = [];
+                canFlip = true;
+                if(matchedPairs === 8) {
+                    setTimeout(() => document.getElementById('mem-moves').innerText += " - KAZANDIN! 🎉", 300);
+                }
+            } else {
+                setTimeout(() => {
+                    flippedCards[0].classList.remove('flipped');
+                    flippedCards[1].classList.remove('flipped');
+                    flippedCards = [];
+                    canFlip = true;
+                }, 1000);
+            }
+        }
+
+        // --- TAŞ KAĞIT MAKAS ---
+        let pScore = 0;
+        let cScore = 0;
+        const rpsChoices = ['🪨', '📄', '✂️'];
+        function openRps() {
+            closeGamesMenu();
+            setTimeout(() => {
+                let modal = document.getElementById('rpsModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+                resetRPS();
+            }, 300);
+        }
+
+        function playRPS(pChoice) {
+            let cChoice = rpsChoices[Math.floor(Math.random() * 3)];
+            let resText = "";
+            let color = "var(--text-sub)";
+            
+            if(pChoice === cChoice) {
+                resText = `Sen: ${pChoice}<br>Tesla: ${cChoice}<br><span>Berabere!</span>`;
+            } else if (
+                (pChoice === '🪨' && cChoice === '✂️') ||
+                (pChoice === '📄' && cChoice === '🪨') ||
+                (pChoice === '✂️' && cChoice === '📄')
+            ) {
+                pScore++;
+                color = "#28cd41";
+                resText = `Sen: ${pChoice}<br>Tesla: ${cChoice}<br><span style="color:${color}">Kazandın!</span>`;
+            } else {
+                cScore++;
+                color = "#ff3b30";
+                resText = `Sen: ${pChoice}<br>Tesla: ${cChoice}<br><span style="color:${color}">Tesla Kazandı!</span>`;
+            }
+            
+            document.getElementById('rps-res-text').innerHTML = resText;
+            document.getElementById('rps-pscore').innerText = pScore;
+            document.getElementById('rps-cscore').innerText = cScore;
+        }
+
+        function resetRPS() {
+            pScore = 0;
+            cScore = 0;
+            document.getElementById('rps-pscore').innerText = '0';
+            document.getElementById('rps-cscore').innerText = '0';
+            document.getElementById('rps-res-text').innerHTML = 'Seçimini Yap!';
+        }
+
+        // --- TESLA RACER OYUNU ---
+        const canvas = document.getElementById('teslaCanvas');
+        const ctx = canvas.getContext('2d');
+        let tGameTimer;
+        let tGameRunning = false;
+        let trScore = 0;
+        let tSpeed = 4;
+        let tLinesY = 0;
+        
+        let tCar = {
+            lane: 1, 
+            y: 320,
+            emoji: '🚗'
+        };
+        
+        let tObstacles = [];
+        const obEmojis = ['🚙', '🚚', '🛻', '🚜'];
+        
+        // Input dinleyicileri
+        document.getElementById('tLeftBtn').addEventListener('touchstart', (e) => { e.preventDefault(); moveTesla(-1); });
+        document.getElementById('tLeftBtn').addEventListener('mousedown', () => moveTesla(-1));
+        document.getElementById('tRightBtn').addEventListener('touchstart', (e) => { e.preventDefault(); moveTesla(1); });
+        document.getElementById('tRightBtn').addEventListener('mousedown', () => moveTesla(1));
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+            if (touchX < canvas.width / 2) moveTesla(-1);
+            else moveTesla(1);
+        });
+        canvas.addEventListener('mousedown', (e) => {
+            const clickX = e.clientX - canvas.getBoundingClientRect().left;
+            if (clickX < canvas.width / 2) moveTesla(-1);
+            else moveTesla(1);
+        });
+
+        function moveTesla(dir) {
+            if (!tGameRunning) return;
+            tCar.lane += dir;
+            if (tCar.lane < 0) tCar.lane = 0;
+            if (tCar.lane > 2) tCar.lane = 2;
+        }
+
+        function openTeslaRacer() {
+            closeGamesMenu();
+            setTimeout(() => {
+                let modal = document.getElementById('teslaRacerModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+                drawTeslaInitial();
+            }, 300);
+        }
+
+        function drawTeslaInitial() {
+            ctx.fillStyle = '#2a2a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fff';
+            ctx.font = "20px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("BAŞLA Butonuna Basın", canvas.width/2, canvas.height/2);
+        }
+
+        function startTeslaRacer() {
+            tGameRunning = true;
+            trScore = 0;
+            tSpeed = 4;
+            tObstacles = [];
+            tCar.lane = 1;
+            document.getElementById('tr-score').innerText = trScore;
+            
+            if (tGameTimer) cancelAnimationFrame(tGameTimer);
+            requestAnimationFrame(teslaGameLoop);
+        }
+
+        function teslaGameLoop() {
+            if (!tGameRunning) return;
+            updateTesla();
+            drawTesla();
+            tGameTimer = requestAnimationFrame(teslaGameLoop);
+        }
+
+        function getLaneX(lane) {
+            return (lane * 100) + 50;
+        }
+
+        function updateTesla() {
+            trScore += 0.1;
+            document.getElementById('tr-score').innerText = Math.floor(trScore);
+            
+            if(trScore > 0 && Math.floor(trScore) % 30 === 0) {
+                tSpeed += 0.005; // Oyun zamanla yavaşça hızlanır
+            }
+
+            tLinesY += tSpeed;
+            if(tLinesY >= 40) tLinesY = 0;
+
+            if (Math.random() < 0.015 * (tSpeed / 4)) {
+                let lane = Math.floor(Math.random() * 3);
+                let safe = true;
+                for(let ob of tObstacles) {
+                    if (ob.lane === lane && ob.y < 100) safe = false;
+                }
+                if (safe) {
+                    tObstacles.push({
+                        lane: lane,
+                        y: -50,
+                        emoji: obEmojis[Math.floor(Math.random() * obEmojis.length)]
+                    });
+                }
+            }
+
+            for (let i = 0; i < tObstacles.length; i++) {
+                tObstacles[i].y += tSpeed * 0.8; 
+
+                let carX = getLaneX(tCar.lane);
+                let obX = getLaneX(tObstacles[i].lane);
+                
+                if (Math.abs(carX - obX) < 40 && Math.abs(tCar.y - tObstacles[i].y) < 50) {
+                    tGameRunning = false;
+                    drawCrash();
+                    return;
+                }
+            }
+            
+            tObstacles = tObstacles.filter(ob => ob.y < canvas.height + 50);
+        }
+
+        function drawTesla() {
+            ctx.fillStyle = '#2a2a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([20, 20]);
+            
+            ctx.beginPath();
+            ctx.moveTo(100, tLinesY - 40); ctx.lineTo(100, canvas.height);
+            ctx.moveTo(200, tLinesY - 40); ctx.lineTo(200, canvas.height);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffcc00';
+            ctx.setLineDash([]);
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(3, 0); ctx.lineTo(3, canvas.height);
+            ctx.moveTo(297, 0); ctx.lineTo(297, canvas.height);
+            ctx.stroke();
+
+            ctx.font = "40px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            tObstacles.forEach(ob => {
+                ctx.fillText(ob.emoji, getLaneX(ob.lane), ob.y);
+            });
+
+            ctx.fillText(tCar.emoji, getLaneX(tCar.lane), tCar.y);
+        }
+
+        function drawCrash() {
+            ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            ctx.font = "30px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("ÇARPTIN! 💥", canvas.width/2, canvas.height/2 - 20);
+            ctx.font = "20px Inter, sans-serif";
+            ctx.fillText(`Skor: ${Math.floor(trScore)}`, canvas.width/2, canvas.height/2 + 20);
+        }
     </script>
-    <footer style="margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%;">
-        <div style="height: 1px; width: 100px; background: rgba(0,0,0,0.1); margin: 0 auto 20px;"></div>
-        <p style="color: #bbb; font-size: 0.9rem; letter-spacing: 2px; font-weight: 300; text-transform: uppercase;">
-            Created by <span style="color: #888; font-weight: 600;">Berkan Şan</span>
-        </p>
-    </footer>
 </body>
-</body>
+
 </html>
